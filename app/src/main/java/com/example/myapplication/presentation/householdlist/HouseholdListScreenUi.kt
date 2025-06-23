@@ -1,6 +1,7 @@
-package com.example.myapplication.presentation.screen
+package com.example.myapplication.presentation.householdlist
 
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -18,16 +19,15 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.example.myapplication.presentation.viewmodel.HouseholdListViewModel
 import com.example.myapplication.ui.theme.AppTheme
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.myapplication.presentation.HouseholdItem
+import com.example.myapplication.presentation.householdlist.components.HouseholdItem
 import androidx.compose.foundation.lazy.items
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HouseholdListScreen(
+fun HouseholdListScreenUi(
+    onHouseholdClick: (Long) -> Unit,
     viewModel: HouseholdListViewModel = hiltViewModel()
 ) {
 
@@ -46,7 +46,14 @@ fun HouseholdListScreen(
         content = { padding ->
             LazyColumn(modifier = Modifier.padding(padding)) {
                 items(state.value.households){ household ->
-                    HouseholdItem(household, modifier = Modifier)
+                    HouseholdItem(
+                        household,
+                        modifier = Modifier
+                            .clickable{
+                                println(" Kliknięto household z ID = ${household.id}")
+                                onHouseholdClick(household.id)
+                            }
+                    )
 
                 }
             }

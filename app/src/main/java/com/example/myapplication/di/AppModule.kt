@@ -6,10 +6,14 @@ import androidx.room.Room
 import com.example.myapplication.data.local.database.AppDatabaseCallback
 import com.example.myapplication.data.local.database.AppDatabase
 import com.example.myapplication.data.local.repository.OfflineHouseholdRepository
+import com.example.myapplication.data.local.repository.OfflineProductRepository
 import com.example.myapplication.data.preferences.UserPreferences
 import com.example.myapplication.domain.repository.HouseholdRepository
+import com.example.myapplication.domain.repository.ProductRepository
 import com.example.myapplication.domain.useCases.GetHouseholds
+import com.example.myapplication.domain.useCases.GetProductsFromHousehold
 import com.example.myapplication.domain.useCases.HouseholdUseCases
+import com.example.myapplication.domain.useCases.ProductUseCases
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,9 +48,23 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideProductRepository(db: AppDatabase): ProductRepository {
+        return OfflineProductRepository(db.productDao())
+    }
+
+    @Provides
+    @Singleton
     fun provideHouseholdUseCases(repository: HouseholdRepository): HouseholdUseCases {
         return HouseholdUseCases(
             getHouseholds = GetHouseholds(repository)
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideProductUseCases(repository: ProductRepository): ProductUseCases {
+        return ProductUseCases(
+            getProductsByHousehold = GetProductsFromHousehold(repository)
         )
     }
 
@@ -61,6 +79,14 @@ object AppModule {
     @Provides
     @Singleton
     fun provideHouseholdUserDao(database: AppDatabase) = database.householdUserDao()
+
+    @Provides
+    @Singleton
+    fun provideProductDao(database: AppDatabase) = database.productDao()
+
+    @Provides
+    @Singleton
+    fun provideProductRequestDao(database: AppDatabase) = database.productRequestDao()
 
     @Provides
     @Singleton

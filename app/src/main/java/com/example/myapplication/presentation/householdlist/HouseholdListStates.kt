@@ -1,4 +1,4 @@
-package com.example.myapplication.presentation.viewmodel.states
+package com.example.myapplication.presentation.householdlist
 
 import com.example.myapplication.domain.model.Household
 
