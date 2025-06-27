@@ -10,4 +10,7 @@ interface ProductRepository {
     suspend fun getProductById(productId: Long): Product?
 
     suspend fun insertProduct(product: Product)
+
+    suspend fun updateProduct(product: Product)
+
 }

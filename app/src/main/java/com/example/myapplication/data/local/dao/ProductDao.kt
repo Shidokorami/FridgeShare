@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.myapplication.data.local.entity.ProductEntity
+import com.example.myapplication.data.local.model.ProductWithBuyer
 import com.example.myapplication.domain.model.Product
 import kotlinx.coroutines.flow.Flow
 
@@ -38,4 +39,12 @@ interface ProductDao {
         """
     )
     fun getProductsFromHousehold(householdId: Long): Flow<List<ProductEntity>>
+
+    @Query("""
+        SELECT * 
+        FROM product 
+        WHERE householdId = :householdId
+    """)
+    fun getProductsWithBuyersFromHousehold(householdId: Long): Flow<List<ProductWithBuyer>>
+
 }

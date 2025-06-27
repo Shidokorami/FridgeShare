@@ -3,7 +3,7 @@ package com.example.myapplication.presentation.householdlist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.data.preferences.UserPreferences
-import com.example.myapplication.domain.useCases.HouseholdUseCases
+import com.example.myapplication.domain.useCases.household_use_cases.HouseholdUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.Job

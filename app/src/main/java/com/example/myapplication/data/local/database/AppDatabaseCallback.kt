@@ -48,12 +48,12 @@ val initialHouseholdUser = listOf(
     )
 
 val initialProducts = listOf(
-    ProductEntity(id = 1, householdId = 2, name = "Puszka Coli", quantity = 3.0f, buyerId = 3),
+    ProductEntity(id = 1, householdId = 2, name = "Puszka Coli", quantity = BigDecimal(3), buyerId = 3),
     ProductEntity(
         id = 2,
         householdId = 2,
         name = "Ziemniaki",
-        quantity = 1.0f,
+        quantity = BigDecimal(1.5),
         buyerId = 4,
         expirationDate = DateConverter.date(2025, 7, 12)
     )

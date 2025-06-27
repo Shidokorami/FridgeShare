@@ -10,10 +10,12 @@ import com.example.myapplication.data.local.repository.OfflineProductRepository
 import com.example.myapplication.data.preferences.UserPreferences
 import com.example.myapplication.domain.repository.HouseholdRepository
 import com.example.myapplication.domain.repository.ProductRepository
-import com.example.myapplication.domain.useCases.GetHouseholds
-import com.example.myapplication.domain.useCases.GetProductsFromHousehold
-import com.example.myapplication.domain.useCases.HouseholdUseCases
-import com.example.myapplication.domain.useCases.ProductUseCases
+import com.example.myapplication.domain.useCases.household_use_cases.GetHouseholds
+import com.example.myapplication.domain.useCases.product_use_cases.GetProductsFromHousehold
+import com.example.myapplication.domain.useCases.household_use_cases.HouseholdUseCases
+import com.example.myapplication.domain.useCases.product_use_cases.AddProduct
+import com.example.myapplication.domain.useCases.product_use_cases.GetProduct
+import com.example.myapplication.domain.useCases.product_use_cases.ProductUseCases
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -64,7 +66,9 @@ object AppModule {
     @Singleton
     fun provideProductUseCases(repository: ProductRepository): ProductUseCases {
         return ProductUseCases(
-            getProductsByHousehold = GetProductsFromHousehold(repository)
+            getProductsByHousehold = GetProductsFromHousehold(repository),
+            getProduct = GetProduct(repository),
+            addProduct = AddProduct(repository)
         )
     }
 

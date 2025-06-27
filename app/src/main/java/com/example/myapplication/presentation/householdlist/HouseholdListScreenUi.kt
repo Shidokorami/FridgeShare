@@ -33,7 +33,6 @@ fun HouseholdListScreenUi(
 
     val state = viewModel.state.collectAsState()
 
-    viewModel.getHouseholds()
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
@@ -43,6 +42,7 @@ fun HouseholdListScreenUi(
                 scrollBehavior = scrollBehavior
             )
         },
+
         content = { padding ->
             LazyColumn(modifier = Modifier.padding(padding)) {
                 items(state.value.households){ household ->

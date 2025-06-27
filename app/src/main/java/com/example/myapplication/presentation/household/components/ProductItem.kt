@@ -1,19 +1,18 @@
 package com.example.myapplication.presentation.household.components
 
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Kitchen
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.myapplication.domain.model.Product
 
@@ -25,7 +24,7 @@ fun ProductItem(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(height = 100.dp)
+            .height(height = 50.dp)
             .padding(
                 vertical = 5.dp,
                 horizontal = 3.dp
@@ -41,16 +40,16 @@ fun ProductItem(
     ) {
         Row(
             modifier = Modifier
-                .align(Alignment.CenterHorizontally)
+                .fillMaxSize()
+                .align(Alignment.Start)
+                .padding(start = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
+
 
         ) {
-            Icon(
-                imageVector = Icons.Filled.Kitchen,
-                contentDescription = "Fridge Icon"
-            )
             Text(
                 text =product.name,
-                Modifier.align(Alignment.CenterVertically)
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
             )
 
         }

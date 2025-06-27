@@ -12,7 +12,7 @@ class OfflineProductRepository(
     private val dao: ProductDao
 ): ProductRepository {
     override fun getProductsFromHousehold(householdId: Long): Flow<List<Product>> {
-        return dao.getProductsFromHousehold(householdId).map { products ->
+        return dao.getProductsWithBuyersFromHousehold(householdId).map { products ->
             products.map{ it.toProduct()}
         }
     }
@@ -23,6 +23,10 @@ class OfflineProductRepository(
 
     override suspend fun insertProduct(product: Product) {
         dao.insert(product.toProductEntity())
+    }
+
+    override suspend fun updateProduct(product: Product) {
+        dao.update(product.toProductEntity())
     }
 
 }
