@@ -7,6 +7,8 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.myapplication.data.local.entity.ProductRequestEntity
+import com.example.myapplication.data.local.pojo.ProductRequestWithUsers
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
@@ -27,5 +29,12 @@ interface ProductRequestDao {
             WHERE id = :productId
         """
     )
-    suspend fun getRequestById(productId: Long): ProductRequestEntity
+    suspend fun getRequestById(productId: Long): ProductRequestWithUsers?
+
+    @Query("""
+        SELECT * 
+        FROM product_request
+        WHERE householdId = :householdId AND fulfilled = :isFulfilled
+    """)
+    fun getRequestByFulfillForHousehold(householdId: Long, isFulfilled: Boolean ): Flow<List<ProductRequestWithUsers>>
 }

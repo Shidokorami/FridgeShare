@@ -1,4 +1,4 @@
-package com.example.myapplication.presentation.household.components
+package com.example.myapplication.presentation.productlist.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize

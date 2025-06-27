@@ -1,4 +1,4 @@
-package com.example.myapplication.data.local.model
+package com.example.myapplication.data.local.pojo
 
 import androidx.room.Embedded
 import androidx.room.Relation

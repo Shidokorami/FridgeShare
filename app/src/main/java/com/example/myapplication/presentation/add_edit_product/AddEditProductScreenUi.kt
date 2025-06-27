@@ -6,26 +6,29 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myapplication.presentation.add_edit_product.AddEditProductViewModel.UiEvent
 import com.example.myapplication.presentation.add_edit_product.components.AddEditTextField
 import com.example.myapplication.presentation.add_edit_product.components.UnitDropdownMenu
-import com.example.myapplication.presentation.householdlist.MainTopBar
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,13 +37,15 @@ fun AddEditProductScreenUi(
     viewModel: AddEditProductViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit
 ) {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     val name by viewModel.productName.collectAsState()
     val quantity by viewModel.productQuantity.collectAsState()
     val unit by viewModel.productUnit.collectAsState()
     val isDropdownExpanded by viewModel.isUnitDropdownExpanded.collectAsState()
     val expirationDate by viewModel.productExpirationDate.collectAsState()
+
+    val householdName = viewModel.householdName.collectAsState().value
+
 
     LaunchedEffect(Unit) {
         viewModel.eventFlow.collectLatest { event ->
@@ -58,9 +63,23 @@ fun AddEditProductScreenUi(
 
     Scaffold(
         topBar = {
-            MainTopBar(
-                modifier = Modifier,
-                scrollBehavior = scrollBehavior
+            TopAppBar(
+                title = {
+                    Text(
+                        text = householdName,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                )
             )
         },
         content = { padding ->

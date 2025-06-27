@@ -7,9 +7,14 @@ import com.example.myapplication.data.local.database.AppDatabaseCallback
 import com.example.myapplication.data.local.database.AppDatabase
 import com.example.myapplication.data.local.repository.OfflineHouseholdRepository
 import com.example.myapplication.data.local.repository.OfflineProductRepository
+import com.example.myapplication.data.local.repository.OfflineProductRequestRepository
+import com.example.myapplication.data.local.repository.OfflineUserRepository
 import com.example.myapplication.data.preferences.UserPreferences
 import com.example.myapplication.domain.repository.HouseholdRepository
 import com.example.myapplication.domain.repository.ProductRepository
+import com.example.myapplication.domain.repository.ProductRequestRepository
+import com.example.myapplication.domain.repository.UserRepository
+import com.example.myapplication.domain.useCases.household_use_cases.GetHousehold
 import com.example.myapplication.domain.useCases.household_use_cases.GetHouseholds
 import com.example.myapplication.domain.useCases.product_use_cases.GetProductsFromHousehold
 import com.example.myapplication.domain.useCases.household_use_cases.HouseholdUseCases
@@ -56,9 +61,22 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideProductRequestRepository(db: AppDatabase): ProductRequestRepository{
+        return OfflineProductRequestRepository(db.productRequestDao())
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(db: AppDatabase): UserRepository{
+        return OfflineUserRepository(db.userDao())
+    }
+
+    @Provides
+    @Singleton
     fun provideHouseholdUseCases(repository: HouseholdRepository): HouseholdUseCases {
         return HouseholdUseCases(
-            getHouseholds = GetHouseholds(repository)
+            getHouseholds = GetHouseholds(repository),
+            getHousehold = GetHousehold(repository)
         )
     }
 

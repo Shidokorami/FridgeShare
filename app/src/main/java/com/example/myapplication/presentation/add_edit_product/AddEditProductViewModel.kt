@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.example.myapplication.domain.model.exception.InvalidProductException
+import com.example.myapplication.domain.useCases.household_use_cases.HouseholdUseCases
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import java.math.BigDecimal
@@ -19,7 +20,8 @@ import java.math.BigDecimal
 
 @HiltViewModel
 class AddEditProductViewModel @Inject constructor(
-    private val useCases: ProductUseCases,
+    private val productUseCases: ProductUseCases,
+    private val householdUseCases: HouseholdUseCases,
     savedStateHandle: SavedStateHandle
 
 ): ViewModel() {
@@ -46,11 +48,14 @@ class AddEditProductViewModel @Inject constructor(
 
     private val householdId: Long = savedStateHandle.get<Long>("householdId") ?: 0L
 
+    private val _householdName = MutableStateFlow("")
+    val householdName: StateFlow<String> = _householdName.asStateFlow()
+
     init {
         savedStateHandle.get<Long>("productId")?.let { productId ->
             if (productId != -1L) {
                 viewModelScope.launch {
-                    useCases.getProduct(productId)?.also { product ->
+                    productUseCases.getProduct(productId)?.also { product ->
                         currentProductId = product.id
                         _productName.value = product.name
                         _productQuantity.value = product.quantity?.toPlainString() ?: ""
@@ -60,9 +65,15 @@ class AddEditProductViewModel @Inject constructor(
                 }
             }
         }
-    }
 
-    // --- Pojedynczy punkt wejścia dla wszystkich zdarzeń UI ---
+        if (householdId != 0L){
+            viewModelScope.launch {
+                householdUseCases.getHousehold(householdId)?.also{ household ->
+                    _householdName.value = household.name
+                }
+            }
+        }
+    }
     fun onEvent(event: AddEditProductEvent) {
         when (event) {
             is AddEditProductEvent.EnteredName -> {
@@ -94,7 +105,7 @@ class AddEditProductViewModel @Inject constructor(
                             throw InvalidProductException("Quantity must be higher than zero")
                         }
 
-                        useCases.addProduct(
+                        productUseCases.addProduct(
                             Product(
                                 id = currentProductId,
                                 name = _productName.value,

@@ -8,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Update
 
 import com.example.myapplication.data.local.entity.UserEntity
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
@@ -29,5 +30,12 @@ interface UserDao {
         WHERE hu.household_id = :householdId
     """
     )
-    suspend fun getUsersByHousehold(householdId: Long) : List<UserEntity>
+    fun getUsersByHousehold(householdId: Long) : Flow<List<UserEntity>>
+
+    @Query("""
+        SELECT *
+        FROM USER 
+        WHERE id = :userId
+    """)
+    suspend fun getUserById(userId: Long): UserEntity?
 }

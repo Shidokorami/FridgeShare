@@ -1,7 +1,7 @@
 package com.example.myapplication.data.util
 
 import com.example.myapplication.data.local.entity.ProductEntity
-import com.example.myapplication.data.local.model.ProductWithBuyer
+import com.example.myapplication.data.local.pojo.ProductWithBuyer
 import com.example.myapplication.domain.model.Product
 
 

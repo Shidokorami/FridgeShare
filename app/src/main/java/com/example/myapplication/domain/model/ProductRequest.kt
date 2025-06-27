@@ -9,6 +9,8 @@ data class ProductRequest(
 
     val creatorId: Long? = null,
 
+    val creatorName: String? = null,
+
     val name: String,
 
     val quantity: BigDecimal? = null,
@@ -22,6 +24,8 @@ data class ProductRequest(
     val fulfilled: Boolean = false,
 
     val fulfilledBy: Long? = null,
+    
+    val fulfillerName: String? = null,
 
     val moneyReturned: Boolean = false
 )

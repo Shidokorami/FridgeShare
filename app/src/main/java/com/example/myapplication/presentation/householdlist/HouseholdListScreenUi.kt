@@ -50,7 +50,7 @@ fun HouseholdListScreenUi(
                         household,
                         modifier = Modifier
                             .clickable{
-                                println(" Kliknięto household z ID = ${household.id}")
+
                                 onHouseholdClick(household.id)
                             }
                     )

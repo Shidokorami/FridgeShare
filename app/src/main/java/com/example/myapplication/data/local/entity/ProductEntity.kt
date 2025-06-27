@@ -1,6 +1,5 @@
 package com.example.myapplication.data.local.entity
 
-import android.text.BoringLayout
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey

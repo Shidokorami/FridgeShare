@@ -7,8 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.myapplication.data.local.entity.ProductEntity
-import com.example.myapplication.data.local.model.ProductWithBuyer
-import com.example.myapplication.domain.model.Product
+import com.example.myapplication.data.local.pojo.ProductWithBuyer
 import kotlinx.coroutines.flow.Flow
 
 @Dao
