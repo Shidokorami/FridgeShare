@@ -11,4 +11,8 @@ sealed class AddEditProductEvent {
     data class ChangeExpirationDate(val date: Long?) : AddEditProductEvent()
 
     object SaveProduct : AddEditProductEvent()
+    object DeleteProduct : AddEditProductEvent()
+
+    object ShowDeleteConfirmation: AddEditProductEvent()
+    object HideDeleteConfirmation: AddEditProductEvent()
 }

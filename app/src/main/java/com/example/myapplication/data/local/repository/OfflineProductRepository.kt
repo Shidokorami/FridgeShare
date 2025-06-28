@@ -29,4 +29,9 @@ class OfflineProductRepository(
         dao.update(product.toProductEntity())
     }
 
+    override suspend fun deleteProduct(product: Product) {
+        dao.delete(product.toProductEntity())
+    }
+
+
 }

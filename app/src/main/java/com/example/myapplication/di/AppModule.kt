@@ -19,6 +19,7 @@ import com.example.myapplication.domain.useCases.household_use_cases.GetHousehol
 import com.example.myapplication.domain.useCases.product_use_cases.GetProductsFromHousehold
 import com.example.myapplication.domain.useCases.household_use_cases.HouseholdUseCases
 import com.example.myapplication.domain.useCases.product_use_cases.AddProduct
+import com.example.myapplication.domain.useCases.product_use_cases.DeleteProduct
 import com.example.myapplication.domain.useCases.product_use_cases.GetProduct
 import com.example.myapplication.domain.useCases.product_use_cases.ProductUseCases
 import dagger.Module
@@ -86,7 +87,8 @@ object AppModule {
         return ProductUseCases(
             getProductsByHousehold = GetProductsFromHousehold(repository),
             getProduct = GetProduct(repository),
-            addProduct = AddProduct(repository)
+            addProduct = AddProduct(repository),
+            deleteProduct = DeleteProduct(repository)
         )
     }
 

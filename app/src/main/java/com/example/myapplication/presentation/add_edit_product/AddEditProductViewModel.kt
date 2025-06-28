@@ -4,17 +4,17 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.domain.model.Product
+import com.example.myapplication.domain.model.exception.InvalidProductException
+import com.example.myapplication.domain.useCases.household_use_cases.HouseholdUseCases
 import com.example.myapplication.domain.useCases.product_use_cases.ProductUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import com.example.myapplication.domain.model.exception.InvalidProductException
-import com.example.myapplication.domain.useCases.household_use_cases.HouseholdUseCases
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import java.math.BigDecimal
 
 
@@ -51,9 +51,16 @@ class AddEditProductViewModel @Inject constructor(
     private val _householdName = MutableStateFlow("")
     val householdName: StateFlow<String> = _householdName.asStateFlow()
 
+    private val _isEditing = MutableStateFlow(false)
+    val isEditing: StateFlow<Boolean> = _isEditing.asStateFlow()
+
+    private val _showDeleteConfirmationDialog = MutableStateFlow(false)
+    val showDeleteConfirmationDialog: StateFlow<Boolean> = _showDeleteConfirmationDialog
+
     init {
         savedStateHandle.get<Long>("productId")?.let { productId ->
             if (productId != -1L) {
+                _isEditing.value = true
                 viewModelScope.launch {
                     productUseCases.getProduct(productId)?.also { product ->
                         currentProductId = product.id
@@ -101,9 +108,7 @@ class AddEditProductViewModel @Inject constructor(
                         if (_productName.value.isBlank()) {
                             throw InvalidProductException("Product name cannot be empty.")
                         }
-                        if (quantityBigDecimal == null || quantityBigDecimal <= BigDecimal.ZERO) {
-                            throw InvalidProductException("Quantity must be higher than zero")
-                        }
+
 
                         productUseCases.addProduct(
                             Product(
@@ -131,12 +136,36 @@ class AddEditProductViewModel @Inject constructor(
                     }
                 }
             }
+
+            is AddEditProductEvent.DeleteProduct -> {
+                viewModelScope.launch {
+                    currentProductId?.let { id->
+                        val productToDelete = productUseCases.getProduct(id)
+                        productToDelete?.let { product ->
+                            productUseCases.deleteProduct(product )
+                            _showDeleteConfirmationDialog.value = false
+                            _eventFlow.emit(UiEvent.DeleteProductSucces)
+                        }
+                    }
+                }
+
+
+            }
+
+            is AddEditProductEvent.ShowDeleteConfirmation -> {
+                _showDeleteConfirmationDialog.value = true
+            }
+
+            is AddEditProductEvent.HideDeleteConfirmation -> {
+                _showDeleteConfirmationDialog.value = false
+            }
         }
     }
 
     sealed class UiEvent {
         data class ShowSnackbar(val message: String) : UiEvent()
         object SaveProductSuccess : UiEvent()
+        object DeleteProductSucces : UiEvent()
     }
 
 }

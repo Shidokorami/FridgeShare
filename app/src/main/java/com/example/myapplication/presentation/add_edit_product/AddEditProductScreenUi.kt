@@ -1,5 +1,6 @@
 package com.example.myapplication.presentation.add_edit_product
 
+import android.graphics.Color.red
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -8,12 +9,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -21,13 +28,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myapplication.presentation.add_edit_product.AddEditProductViewModel.UiEvent
 import com.example.myapplication.presentation.add_edit_product.components.AddEditTextField
+import com.example.myapplication.presentation.add_edit_product.components.DeleteProductConfirmationDialog
+import com.example.myapplication.presentation.add_edit_product.components.ExpirationDatePicker
 import com.example.myapplication.presentation.add_edit_product.components.UnitDropdownMenu
 import kotlinx.coroutines.flow.collectLatest
 
@@ -43,9 +54,13 @@ fun AddEditProductScreenUi(
     val unit by viewModel.productUnit.collectAsState()
     val isDropdownExpanded by viewModel.isUnitDropdownExpanded.collectAsState()
     val expirationDate by viewModel.productExpirationDate.collectAsState()
+    val isEditing by viewModel.isEditing.collectAsState()
 
     val householdName = viewModel.householdName.collectAsState().value
 
+    val showDeleteConfirmationDialog by viewModel.showDeleteConfirmationDialog.collectAsState()
+
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
         viewModel.eventFlow.collectLatest { event ->
@@ -56,12 +71,32 @@ fun AddEditProductScreenUi(
                     onNavigateBack()
                 }
 
-                is UiEvent.ShowSnackbar -> TODO()
+                is UiEvent.DeleteProductSucces -> {
+
+                    onNavigateBack()
+                }
+
+                is UiEvent.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(
+                        message = event.message,
+                        withDismissAction = true
+                    )
+
+                }
+
             }
         }
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState){ data ->
+            Snackbar(
+                snackbarData = data,
+                containerColor = MaterialTheme.colorScheme.errorContainer,
+                contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                dismissActionContentColor = MaterialTheme.colorScheme.onErrorContainer
+            )
+        } },
         topBar = {
             TopAppBar(
                 title = {
@@ -109,7 +144,13 @@ fun AddEditProductScreenUi(
                         AddEditTextField(
                             text = quantity,
                             label = "Quantity",
-                            onValueChange = { viewModel.onEvent(AddEditProductEvent.EnteredQuantity(it)) },
+                            onValueChange = {
+                                viewModel.onEvent(
+                                    AddEditProductEvent.EnteredQuantity(
+                                        it
+                                    )
+                                )
+                            },
                             modifier = Modifier.weight(1f)
                         )
 
@@ -117,8 +158,11 @@ fun AddEditProductScreenUi(
                             selectedUnit = unit,
                             isExpanded = isDropdownExpanded,
                             onExpandedChange = { expanded ->
-                                Log.d("DropdownClickDebug", "onExpandedChange called with: $expanded")
-                                viewModel.onEvent(AddEditProductEvent.ChangeUnitDropdownExpanded(expanded))
+                                viewModel.onEvent(
+                                    AddEditProductEvent.ChangeUnitDropdownExpanded(
+                                        expanded
+                                    )
+                                )
                             },
                             onUnitSelected = { unitValue ->
                                 viewModel.onEvent(AddEditProductEvent.ChangeUnitSelection(unitValue))
@@ -129,16 +173,61 @@ fun AddEditProductScreenUi(
                 }
 
                 item {
-                    Button(
-                        onClick = { viewModel.onEvent(AddEditProductEvent.SaveProduct) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp)
+                    ExpirationDatePicker(
+                        selectedDate = expirationDate,
+                        onDateSelected = { newDate ->
+                            viewModel.onEvent(AddEditProductEvent.ChangeExpirationDate(newDate))
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+                item {
+
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        Text("Save")
+                        if (isEditing) {
+                            Button(
+                                onClick = { viewModel.onEvent(AddEditProductEvent.ShowDeleteConfirmation) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 12.dp)
+                                    .weight(1f),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(0xffdb042f),
+                                    contentColor = MaterialTheme.colorScheme.onError
+                                )
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Delete,
+                                    contentDescription = "Delete"
+                                )
+                            }
+                        }
+
+                        Button(
+                            onClick = { viewModel.onEvent(AddEditProductEvent.SaveProduct) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 16.dp)
+                                .weight(2f)
+                        ) {
+                            Text("Save")
+                        }
                     }
+
                 }
             }
         }
     )
+
+    if (showDeleteConfirmationDialog) {
+        DeleteProductConfirmationDialog(
+            onDismissRequest = { viewModel.onEvent(AddEditProductEvent.HideDeleteConfirmation) },
+            onConfirmation = { viewModel.onEvent(AddEditProductEvent.DeleteProduct) },
+            dialogTitle = "Confirm Deletion",
+            dialogText = "Are you sure you want to delete this product? This action cannot be undone."
+        )
+    }
 }
