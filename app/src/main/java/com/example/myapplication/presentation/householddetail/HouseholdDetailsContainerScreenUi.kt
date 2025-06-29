@@ -106,8 +106,9 @@ fun HouseholdDetailsContainerScreenUi(
                 val currentHouseholdId = args.householdId
 
                 RequestListScreenUi(
-                    householdId = currentHouseholdId // Przekazujemy ID do ekranu
-                    // Dodaj potrzebne callbacki dla RequestListScreenUi
+                    householdId = currentHouseholdId,
+                    onNavigateToAddRequest = { }
+
                 )
             }
 

@@ -10,6 +10,8 @@ import com.example.myapplication.data.local.repository.OfflineProductRepository
 import com.example.myapplication.data.local.repository.OfflineProductRequestRepository
 import com.example.myapplication.data.local.repository.OfflineUserRepository
 import com.example.myapplication.data.preferences.UserPreferences
+import com.example.myapplication.data.remote.repository.RemoteAuthRepository
+import com.example.myapplication.domain.repository.AuthRepository
 import com.example.myapplication.domain.repository.HouseholdRepository
 import com.example.myapplication.domain.repository.ProductRepository
 import com.example.myapplication.domain.repository.ProductRequestRepository
@@ -18,10 +20,14 @@ import com.example.myapplication.domain.useCases.household_use_cases.GetHousehol
 import com.example.myapplication.domain.useCases.household_use_cases.GetHouseholds
 import com.example.myapplication.domain.useCases.product_use_cases.GetProductsFromHousehold
 import com.example.myapplication.domain.useCases.household_use_cases.HouseholdUseCases
+import com.example.myapplication.domain.useCases.auth_use_cases.AuthUseCases
+import com.example.myapplication.domain.useCases.auth_use_cases.SignIn
 import com.example.myapplication.domain.useCases.product_use_cases.AddProduct
 import com.example.myapplication.domain.useCases.product_use_cases.DeleteProduct
 import com.example.myapplication.domain.useCases.product_use_cases.GetProduct
 import com.example.myapplication.domain.useCases.product_use_cases.ProductUseCases
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -74,6 +80,27 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideFirebaseAuth(): FirebaseAuth {
+        return FirebaseAuth.getInstance()
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseFirestore(): FirebaseFirestore {
+        return FirebaseFirestore.getInstance()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(
+        firebaseAuth: FirebaseAuth,
+        firestore: FirebaseFirestore
+    ): AuthRepository{
+        return RemoteAuthRepository(firebaseAuth, firestore)
+    }
+
+    @Provides
+    @Singleton
     fun provideHouseholdUseCases(repository: HouseholdRepository): HouseholdUseCases {
         return HouseholdUseCases(
             getHouseholds = GetHouseholds(repository),
@@ -89,6 +116,14 @@ object AppModule {
             getProduct = GetProduct(repository),
             addProduct = AddProduct(repository),
             deleteProduct = DeleteProduct(repository)
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideLoginUseCases(repository: AuthRepository): AuthUseCases {
+        return AuthUseCases(
+            signIn = SignIn(repository)
         )
     }
 

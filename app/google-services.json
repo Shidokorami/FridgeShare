@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "136834092445",
+    "project_id": "fridgeshare-f476e",
+    "storage_bucket": "fridgeshare-f476e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:136834092445:android:6641fb0a25d85c8785b374",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "136834092445-5fladrg0gg0th79fm2gfvmcd6los3be4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.myapplication",
+            "certificate_hash": "a0e6dc0425ec0523907a3c9e88b9106dc835b3c6"
+          }
+        },
+        {
+          "client_id": "136834092445-1r63h66i8rdjscjpaldi7jir2t5loh0l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgvLoRtvR_l7Ba97HOauiALDpi8Ifa3YI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "136834092445-1r63h66i8rdjscjpaldi7jir2t5loh0l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

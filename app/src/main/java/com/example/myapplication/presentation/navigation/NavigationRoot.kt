@@ -7,8 +7,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.myapplication.presentation.add_edit_product.AddEditProductScreenUi
+import com.example.myapplication.presentation.add_edit_request.AddEditRequestScreenUi
 import com.example.myapplication.presentation.householddetail.HouseholdDetailsContainerScreenUi
 import com.example.myapplication.presentation.householdlist.HouseholdListScreenUi
+import com.example.myapplication.presentation.loginscreen.LoginScreenUi
+import com.example.myapplication.presentation.singup.SignUpScreenUi
 
 @Composable
 fun NavigationRoot(
@@ -18,9 +21,15 @@ fun NavigationRoot(
 
     NavHost(
         navController = navController,
-        startDestination = HouseholdListScreen,
+        startDestination = LoginScreen,
         modifier = modifier
     ) {
+        composable<LoginScreen> {
+            LoginScreenUi(
+                onNavigateToSignUp = {navController.navigate(SignUpScreen)}
+            )
+        }
+
         composable<HouseholdListScreen> {
             HouseholdListScreenUi(
                 onHouseholdClick = { householdId ->
@@ -47,6 +56,22 @@ fun NavigationRoot(
 
             AddEditProductScreenUi(
                 onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        composable<AddEditRequestScreen> { backStackEntry ->
+            val addEditRequestScreen = backStackEntry.toRoute<AddEditRequestScreen>()
+            val requestId = addEditRequestScreen.requestId
+            val householdId = addEditRequestScreen.requestId
+
+            AddEditRequestScreenUi(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        composable<SignUpScreen> { backStackEntry ->
+            SignUpScreenUi(
+                onNavigateBack = {navController.popBackStack()}
             )
         }
     }

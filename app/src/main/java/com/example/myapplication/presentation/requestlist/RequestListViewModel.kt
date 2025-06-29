@@ -25,8 +25,7 @@ class RequestListViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    private val householdId: Long = savedStateHandle.get<String>("householdId")?.toLongOrNull()
-        ?: throw IllegalArgumentException("HouseholdId is required")
+    private val householdId: Long = savedStateHandle.get<Long>("householdId")?: throw IllegalArgumentException("HouseholdId is required")
 
     private val _unfulfilledRequests = MutableStateFlow<List<ProductRequest>>(emptyList())
     val unfulfilledRequests: StateFlow<List<ProductRequest>> = _unfulfilledRequests.asStateFlow()
@@ -42,6 +41,7 @@ class RequestListViewModel @Inject constructor(
 
     private var getUnfulfilledRequestsJob: Job? = null
     private var getFulfilledRequestsJob: Job? = null
+
 
 
     init {
