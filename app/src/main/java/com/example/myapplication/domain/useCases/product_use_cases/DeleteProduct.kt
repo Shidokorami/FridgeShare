@@ -6,7 +6,7 @@ import com.example.myapplication.domain.repository.ProductRepository
 class DeleteProduct(
     private val repository: ProductRepository
 ) {
-    suspend operator fun invoke(product: Product){
-        repository.deleteProduct(product)
+    suspend operator fun invoke(householdId: String, product: Product) {
+        repository.deleteProduct(householdId, product.id)
     }
 }

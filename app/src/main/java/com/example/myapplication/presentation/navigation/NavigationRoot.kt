@@ -26,7 +26,12 @@ fun NavigationRoot(
     ) {
         composable<LoginScreen> {
             LoginScreenUi(
-                onNavigateToSignUp = {navController.navigate(SignUpScreen)}
+                onNavigateToSignUp = {navController.navigate(SignUpScreen)},
+                onNavigateToHouseholdList = {
+                    navController.navigate(HouseholdListScreen) {
+                        popUpTo(LoginScreen) { inclusive = true }
+                    }
+                }
             )
         }
 
@@ -71,7 +76,12 @@ fun NavigationRoot(
 
         composable<SignUpScreen> { backStackEntry ->
             SignUpScreenUi(
-                onNavigateBack = {navController.popBackStack()}
+                onNavigateBack = {navController.popBackStack()},
+                onNavigateToHouseholdList = {
+                    navController.navigate(LoginScreen) {
+                        popUpTo(SignUpScreen) { inclusive = true }
+                    }
+                }
             )
         }
     }

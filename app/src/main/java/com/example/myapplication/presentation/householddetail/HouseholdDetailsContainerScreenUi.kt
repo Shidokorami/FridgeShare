@@ -24,6 +24,7 @@ import androidx.navigation.toRoute
 import com.example.myapplication.presentation.householddetail.components.BottomNavigationBar
 import com.example.myapplication.presentation.householduserlist.HouseholdUserListScreenUi
 import com.example.myapplication.presentation.navigation.AddEditProductScreen
+import com.example.myapplication.presentation.navigation.AddEditRequestScreen
 import com.example.myapplication.presentation.navigation.HouseholdDetailNavItems
 import com.example.myapplication.presentation.navigation.ProductsScreen
 import com.example.myapplication.presentation.navigation.RequestsScreen
@@ -34,10 +35,10 @@ import com.example.myapplication.presentation.requestlist.RequestListScreenUi
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HouseholdDetailsContainerScreenUi(
-    householdId: Long, // householdId jest typu Long
-    onBackClick: () -> Unit, // Callback do nawigacji "wstecz" na głównym NavControllerze
-    mainNavController: NavController, // Główny NavController do nawigacji poza tym kontenerem
-    viewModel: HouseholdDetailsViewModel = hiltViewModel() // ViewModel dla HouseholdDetails
+    householdId: String,
+    onBackClick: () -> Unit,
+    mainNavController: NavController,
+    viewModel: HouseholdDetailsViewModel = hiltViewModel()
 ) {
 
     val householdNavHostController = rememberNavController()
@@ -86,7 +87,7 @@ fun HouseholdDetailsContainerScreenUi(
                     onNavigateToAddProduct = { currentHouseholdIdFromProductList ->
                         mainNavController.navigate(
                             AddEditProductScreen(
-                                productId = -1L,
+                                productId = "",
                                 householdId = currentHouseholdIdFromProductList
                             )
                         )
@@ -107,8 +108,22 @@ fun HouseholdDetailsContainerScreenUi(
 
                 RequestListScreenUi(
                     householdId = currentHouseholdId,
-                    onNavigateToAddRequest = { }
-
+                    onNavigateToAddRequest = { currentRequestFromRequestList ->
+                        mainNavController.navigate(
+                            AddEditRequestScreen(
+                                requestId = "",
+                                householdId = currentRequestFromRequestList
+                            )
+                        )
+                    },
+                    onNavigateToEditRequest = { requestId, currentRequestFromRequestList ->
+                        mainNavController.navigate(
+                            AddEditRequestScreen(
+                                requestId = requestId,
+                                householdId = currentRequestFromRequestList
+                            )
+                        )
+                    }
                 )
             }
 

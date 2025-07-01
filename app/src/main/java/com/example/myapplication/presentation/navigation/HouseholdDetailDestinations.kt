@@ -9,13 +9,13 @@ import androidx.compose.runtime.Composable
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ProductsScreen(val householdId: Long)
+data class ProductsScreen(val householdId: String)
 
 @Serializable
-data class RequestsScreen(val householdId: Long)
+data class RequestsScreen(val householdId: String)
 
 @Serializable
-data class RoommatesScreen(val householdId: Long)
+data class RoommatesScreen(val householdId: String)
 
 sealed class HouseholdDetailNavItems(
     val baseRoute: String,

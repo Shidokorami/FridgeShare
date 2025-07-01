@@ -1,31 +1,37 @@
 package com.example.myapplication.di
 
-import android.app.Application
 import android.content.Context
-import androidx.room.Room
-import com.example.myapplication.data.local.database.AppDatabaseCallback
-import com.example.myapplication.data.local.database.AppDatabase
-import com.example.myapplication.data.local.repository.OfflineHouseholdRepository
-import com.example.myapplication.data.local.repository.OfflineProductRepository
-import com.example.myapplication.data.local.repository.OfflineProductRequestRepository
-import com.example.myapplication.data.local.repository.OfflineUserRepository
-import com.example.myapplication.data.preferences.UserPreferences
-import com.example.myapplication.data.remote.repository.RemoteAuthRepository
+import com.example.myapplication.data.local.preferences.UserPreferences
+import com.example.myapplication.data.remote.repository.AuthRepoImpl
+import com.example.myapplication.data.remote.repository.HouseholdRepoImpl
+import com.example.myapplication.data.remote.repository.ProductRepoImpl
+import com.example.myapplication.data.remote.repository.ProductRequestRepoImpl
+import com.example.myapplication.data.remote.repository.UserRepoImpl
 import com.example.myapplication.domain.repository.AuthRepository
 import com.example.myapplication.domain.repository.HouseholdRepository
 import com.example.myapplication.domain.repository.ProductRepository
 import com.example.myapplication.domain.repository.ProductRequestRepository
 import com.example.myapplication.domain.repository.UserRepository
-import com.example.myapplication.domain.useCases.household_use_cases.GetHousehold
-import com.example.myapplication.domain.useCases.household_use_cases.GetHouseholds
-import com.example.myapplication.domain.useCases.product_use_cases.GetProductsFromHousehold
-import com.example.myapplication.domain.useCases.household_use_cases.HouseholdUseCases
 import com.example.myapplication.domain.useCases.auth_use_cases.AuthUseCases
 import com.example.myapplication.domain.useCases.auth_use_cases.SignIn
+import com.example.myapplication.domain.useCases.auth_use_cases.SignUp
+import com.example.myapplication.domain.useCases.household_use_cases.CreateHousehold
+import com.example.myapplication.domain.useCases.household_use_cases.GetHousehold
+import com.example.myapplication.domain.useCases.household_use_cases.GetHouseholds
+import com.example.myapplication.domain.useCases.household_use_cases.HouseholdUseCases
 import com.example.myapplication.domain.useCases.product_use_cases.AddProduct
 import com.example.myapplication.domain.useCases.product_use_cases.DeleteProduct
 import com.example.myapplication.domain.useCases.product_use_cases.GetProduct
+import com.example.myapplication.domain.useCases.product_use_cases.GetProductsFromHousehold
 import com.example.myapplication.domain.useCases.product_use_cases.ProductUseCases
+import com.example.myapplication.domain.useCases.request_use_cases.AddRequest
+import com.example.myapplication.domain.useCases.request_use_cases.DeleteRequest
+import com.example.myapplication.domain.useCases.request_use_cases.GetRequest
+import com.example.myapplication.domain.useCases.request_use_cases.GetRequestsByFulfill
+import com.example.myapplication.domain.useCases.request_use_cases.RequestUseCases
+import com.example.myapplication.domain.useCases.user_use_cases.GetUserName
+import com.example.myapplication.domain.useCases.user_use_cases.GetUsersFromHousehold
+import com.example.myapplication.domain.useCases.user_use_cases.UserUseCases
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
@@ -38,45 +44,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
-    @Provides
-    @Singleton
-    fun provideAppDatabase(
-        app: Application,
-        appDatabaseCallback: AppDatabaseCallback
-    ): AppDatabase {
-        return Room.databaseBuilder(
-            app,
-            AppDatabase::class.java,
-            AppDatabase.DATABASE_NAME
-
-        ).addCallback(appDatabaseCallback)
-            .build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideHouseholdRepository(db: AppDatabase): HouseholdRepository {
-        return OfflineHouseholdRepository(db.householdDao())
-    }
-
-    @Provides
-    @Singleton
-    fun provideProductRepository(db: AppDatabase): ProductRepository {
-        return OfflineProductRepository(db.productDao())
-    }
-
-    @Provides
-    @Singleton
-    fun provideProductRequestRepository(db: AppDatabase): ProductRequestRepository{
-        return OfflineProductRequestRepository(db.productRequestDao())
-    }
-
-    @Provides
-    @Singleton
-    fun provideUserRepository(db: AppDatabase): UserRepository{
-        return OfflineUserRepository(db.userDao())
-    }
 
     @Provides
     @Singleton
@@ -95,16 +62,44 @@ object AppModule {
     fun provideAuthRepository(
         firebaseAuth: FirebaseAuth,
         firestore: FirebaseFirestore
-    ): AuthRepository{
-        return RemoteAuthRepository(firebaseAuth, firestore)
+    ): AuthRepository {
+        return AuthRepoImpl(firebaseAuth, firestore)
     }
 
     @Provides
     @Singleton
-    fun provideHouseholdUseCases(repository: HouseholdRepository): HouseholdUseCases {
+    fun provideHouseholdRepository(firestore: FirebaseFirestore): HouseholdRepository {
+        return HouseholdRepoImpl(firestore)
+    }
+
+    @Provides
+    @Singleton
+    fun provideProductRepository(firestore: FirebaseFirestore): ProductRepository {
+        return ProductRepoImpl(firestore)
+    }
+
+    @Provides
+    @Singleton
+    fun provideProductRequestRepository(
+        firestore: FirebaseFirestore,
+        userRepository: UserRepository
+    ): ProductRequestRepository {
+        return ProductRequestRepoImpl(firestore, userRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(firestore: FirebaseFirestore): UserRepository {
+        return UserRepoImpl(firestore)
+    }
+
+    @Provides
+    @Singleton
+    fun provideHouseholdUseCases(householdRepository: HouseholdRepository, authRepository: AuthRepository): HouseholdUseCases {
         return HouseholdUseCases(
-            getHouseholds = GetHouseholds(repository),
-            getHousehold = GetHousehold(repository)
+            getHouseholds = GetHouseholds(householdRepository),
+            getHousehold = GetHousehold(householdRepository),
+            createHousehold = CreateHousehold(authRepository, householdRepository)
         )
     }
 
@@ -121,31 +116,32 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideLoginUseCases(repository: AuthRepository): AuthUseCases {
+    fun provideAuthUseCases(repository: AuthRepository): AuthUseCases {
         return AuthUseCases(
-            signIn = SignIn(repository)
+            signIn = SignIn(repository),
+            signUp = SignUp(repository)
         )
     }
 
     @Provides
     @Singleton
-    fun provideHouseholdDao(database: AppDatabase) = database.householdDao()
+    fun provideRequestUseCases(repository: ProductRequestRepository): RequestUseCases{
+        return RequestUseCases(
+            getRequestsByFulfill = GetRequestsByFulfill(repository),
+            getRequest = GetRequest(repository),
+            addRequest = AddRequest(repository),
+            deleteRequest = DeleteRequest(repository)
+        )
+    }
 
     @Provides
     @Singleton
-    fun provideUserDao(database: AppDatabase) = database.userDao()
-
-    @Provides
-    @Singleton
-    fun provideHouseholdUserDao(database: AppDatabase) = database.householdUserDao()
-
-    @Provides
-    @Singleton
-    fun provideProductDao(database: AppDatabase) = database.productDao()
-
-    @Provides
-    @Singleton
-    fun provideProductRequestDao(database: AppDatabase) = database.productRequestDao()
+    fun provideUserUseCases(householdRepository: HouseholdRepository, userRepository: UserRepository): UserUseCases{
+        return UserUseCases(
+            getUsersFromHousehold = GetUsersFromHousehold(householdRepository, userRepository),
+            getUserName = GetUserName(userRepository)
+        )
+    }
 
     @Provides
     @Singleton

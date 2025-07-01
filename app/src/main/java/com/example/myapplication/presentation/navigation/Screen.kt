@@ -7,13 +7,13 @@ import kotlinx.serialization.Serializable
 data object HouseholdListScreen
 
 @Serializable
-data class HouseholdScreen(val householdId: Long)
+data class HouseholdScreen(val householdId: String)
 
 @Serializable
-data class AddEditProductScreen(val productId: Long = -1L, val householdId: Long)
+data class AddEditProductScreen(val productId: String = "", val householdId: String)
 
 @Serializable
-data class AddEditRequestScreen(val requestId: Long = -1L, val householdId: Long)
+data class AddEditRequestScreen(val requestId: String = "", val householdId: String)
 
 @Serializable
 data object LoginScreen

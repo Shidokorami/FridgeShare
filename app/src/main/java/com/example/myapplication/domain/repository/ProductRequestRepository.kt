@@ -4,13 +4,11 @@ import com.example.myapplication.domain.model.ProductRequest
 import kotlinx.coroutines.flow.Flow
 
 interface ProductRequestRepository {
-
-    fun getRequestByFulfillForHousehold(householdId: Long, isFulfilled: Boolean): Flow<List<ProductRequest>>
-
-    suspend fun getRequestById(requestId: Long): ProductRequest?
-
-    suspend fun insertRequest(request: ProductRequest)
-
-    suspend fun updateRequest(request: ProductRequest)
-
+    fun getProductRequestsForHousehold(householdId: String): Flow<List<ProductRequest>>
+    fun getProductRequestById(householdId: String, requestId: String): Flow<ProductRequest?>
+    suspend fun addProductRequest(householdId: String, productRequest: ProductRequest): String
+    suspend fun updateProductRequest(householdId: String, productRequest: ProductRequest)
+    suspend fun deleteProductRequest(householdId: String, requestId: String)
+    suspend fun markRequestFulfilled(householdId: String, requestId: String, fulfilledByUserId: String)
+    suspend fun markMoneyReturned(householdId: String, requestId: String)
 }

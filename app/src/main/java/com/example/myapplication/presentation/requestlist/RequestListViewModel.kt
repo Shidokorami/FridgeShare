@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.domain.model.ProductRequest
 import com.example.myapplication.domain.repository.ProductRequestRepository
+import com.example.myapplication.domain.useCases.request_use_cases.RequestUseCases
 import com.example.myapplication.presentation.add_edit_product.AddEditProductViewModel.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -20,12 +21,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RequestListViewModel @Inject constructor(
-    private val requestRepository: ProductRequestRepository,
+    private val requestUseCases: RequestUseCases,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
 
-    private val householdId: Long = savedStateHandle.get<Long>("householdId")?: throw IllegalArgumentException("HouseholdId is required")
+    private val householdId: String = savedStateHandle.get<String>("householdId")?: throw IllegalArgumentException("HouseholdId is required")
 
     private val _unfulfilledRequests = MutableStateFlow<List<ProductRequest>>(emptyList())
     val unfulfilledRequests: StateFlow<List<ProductRequest>> = _unfulfilledRequests.asStateFlow()
@@ -51,7 +52,7 @@ class RequestListViewModel @Inject constructor(
 
     private fun getUnfulfilledRequests() {
         getUnfulfilledRequestsJob?.cancel()
-        getUnfulfilledRequestsJob = requestRepository.getRequestByFulfillForHousehold(householdId, false)
+        getUnfulfilledRequestsJob = requestUseCases.getRequestsByFulfill(householdId, false)
             .onEach { requests ->
                 _unfulfilledRequests.value = requests
             }
@@ -60,7 +61,7 @@ class RequestListViewModel @Inject constructor(
 
     private fun getFulfilledRequests() {
         getFulfilledRequestsJob?.cancel()
-        getFulfilledRequestsJob = requestRepository.getRequestByFulfillForHousehold(householdId, true)
+        getFulfilledRequestsJob = requestUseCases.getRequestsByFulfill(householdId, true)
             .onEach { requests ->
                 _fulfilledRequests.value = requests
             }

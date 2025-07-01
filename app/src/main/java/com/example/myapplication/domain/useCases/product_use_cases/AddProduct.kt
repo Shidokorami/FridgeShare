@@ -6,11 +6,11 @@ import com.example.myapplication.domain.repository.ProductRepository
 class AddProduct(
     private val repository: ProductRepository
 ) {
-    suspend operator fun invoke(product: Product){
-        if (product.id != null) {
-            repository.updateProduct(product)
+    suspend operator fun invoke(householdId: String, product: Product) {
+        if (product.id.isBlank()) {
+            repository.addProduct(householdId, product)
         } else {
-            repository.insertProduct(product)
+            repository.updateProduct(householdId, product)
         }
     }
 }

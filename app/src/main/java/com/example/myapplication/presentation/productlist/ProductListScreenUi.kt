@@ -26,9 +26,9 @@ import com.example.myapplication.presentation.productlist.components.ProductItem
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductListScreenUi(
-    householdId: Long,
-    onNavigateToAddProduct: (Long) -> Unit,
-    onNavigateToEditProduct: (Long, Long) -> Unit,
+    householdId: String,
+    onNavigateToAddProduct: (String) -> Unit,
+    onNavigateToEditProduct: (String, String) -> Unit,
     viewModel: ProductListViewModel = hiltViewModel()
 ) {
 
@@ -58,9 +58,7 @@ fun ProductListScreenUi(
                             modifier = Modifier
                                 .padding(8.dp)
                                 .clickable {
-                                    product.id?.let { productId ->
-                                        onNavigateToEditProduct(productId, householdId)
-                                    }
+                                    onNavigateToEditProduct(product.id, householdId)
                                 }
                         )
                     }

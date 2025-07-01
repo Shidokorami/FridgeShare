@@ -3,9 +3,9 @@ package com.example.myapplication.domain.model
 import java.math.BigDecimal
 
 data class Product(
-    val id: Long?,
+    val id: String,
 
-    val householdId: Long,
+    val householdId: String?,
 
     val name: String,
 
@@ -15,7 +15,7 @@ data class Product(
 
     val expirationDate: Long? = null,
 
-    val buyerId: Long? = null,
+    val buyerId: String? = null,
 
     val buyerName: String? = null
 

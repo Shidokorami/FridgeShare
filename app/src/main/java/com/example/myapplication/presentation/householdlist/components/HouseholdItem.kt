@@ -14,10 +14,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.myapplication.domain.model.Household
-import com.example.myapplication.ui.theme.AppTheme
 
 @Composable
 fun HouseholdItem(
@@ -62,16 +60,3 @@ fun HouseholdItem(
 }
 
 
-@Preview
-@Composable
-fun Preview() {
-    AppTheme {
-        val household = Household(id = 1, name = "Jajeczko", creatorId = 3, createdAt = 400)
-
-        HouseholdItem(
-            household = household,
-            modifier = Modifier
-        )
-    }
-
-}

@@ -5,12 +5,22 @@ import kotlinx.coroutines.flow.Flow
 
 interface HouseholdRepository {
 
-    //get all Households
-    fun getHouseholds(): Flow<List<Household>>
+    //get all Households for chosen user by id
+    fun getHouseholdsForUser(userId: String): Flow<List<Household>>
 
-    //get household by id
-    suspend fun getHouseholdById(id: Long): Household?
+    ////get household by id
+    fun getHouseholdById(householdId: String): Flow<Household?>
 
-    //insert/create household
-    suspend fun insertHousehold(household: Household)
+    //Adds new household, returns it's id
+    suspend fun addHousehold(household: Household): String
+
+    suspend fun updateHousehold(household: Household)
+
+    suspend fun addHouseholdMember(householdId: String, userId: String)
+
+    suspend fun removeHouseholdMember(householdId: String, userId: String)
+
+    fun isUserMemberOfHousehold(householdId: String, userId: String): Flow<Boolean>
 }
+
+

@@ -28,9 +28,10 @@ import com.example.myapplication.presentation.requestlist.components.RequestItem
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RequestListScreenUi(
-    householdId: Long,
+    householdId: String,
     viewModel: RequestListViewModel = hiltViewModel(),
-    onNavigateToAddRequest: (Long) -> Unit
+    onNavigateToEditRequest: (String, String) -> Unit,
+    onNavigateToAddRequest: (String) -> Unit
 ) {
 
     val activeRequests by viewModel.unfulfilledRequests.collectAsState()

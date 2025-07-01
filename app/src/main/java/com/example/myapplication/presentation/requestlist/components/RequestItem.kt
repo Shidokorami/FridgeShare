@@ -64,14 +64,14 @@ fun RequestItem(
 @Composable
 fun RequestItemPreview(){
     val request = ProductRequest(
-        id = 1,
-        householdId = 2,
-        creatorId = 3,
+        id = "asas",
+        householdId = "dasda",
+        creatorId = "dsasa",
         name = "Pączki",
         quantity = BigDecimal(3),
         unit = "unit",
         price = null,
-        expirationDate = null,
+       // expirationDate = null,
         fulfilled = false,
         fulfilledBy = null,
         moneyReturned = false

@@ -5,13 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.myapplication.domain.useCases.auth_use_cases.AuthUseCases
 import com.example.myapplication.domain.util.AuthResult
 import com.example.myapplication.presentation.navigation.HouseholdListScreen
+import com.example.myapplication.presentation.navigation.LoginScreen
 import com.example.myapplication.presentation.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,26 +41,31 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun signIn() {
-        val currentUiState = _uiState.value
-        val currentEmail = currentUiState.email
-        val currentPassword = currentUiState.password
+        val email = _uiState.value.email
+        val password = _uiState.value.password
 
-        if (currentEmail.isBlank()) {
+        if (email.isBlank()) {
             _uiState.value = _uiState.value.copy(errorMessage = "Email cannot be empty.")
             return
         }
-        if (currentPassword.isBlank()) {
+        if (password.isBlank()) {
             _uiState.value = _uiState.value.copy(errorMessage = "Password cannot be empty.")
             return
         }
 
-        _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+        _uiState.value = _uiState.value.copy(isLoading = true)
 
         viewModelScope.launch {
-            when (val result = authUseCases.signIn(currentEmail, currentPassword)) {
+            when (val result = authUseCases.signIn(email, password)) {
                 is AuthResult.Success -> {
-                    _eventFlow.emit(UiEvent.Navigate(HouseholdListScreen))
-                    _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = null)
+                    _uiState.value = _uiState.value.copy(isLoading = false)
+                    _eventFlow.emit(
+                        UiEvent.NavigateAndPopUp(
+                            route = HouseholdListScreen,
+                            popUpTo = LoginScreen,
+                            inclusive = true
+                        )
+                    )
                 }
                 is AuthResult.Error -> {
                     _uiState.value = _uiState.value.copy(
