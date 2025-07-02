@@ -42,6 +42,7 @@ class ProductRequestRepoImpl @Inject constructor(
                 fulfilled = this.fulfilled,
                 fulfilledBy = this.fulfilledBy,
                 fulfillerName = fulfillerName,
+                expirationDate = this.fulfilledDate?.time,
                 moneyReturned = this.moneyReturned
             )
         }
@@ -58,6 +59,7 @@ class ProductRequestRepoImpl @Inject constructor(
             fulfilledDate = this.fulfilledDate?.let { Date(it) },
             fulfilled = this.fulfilled,
             fulfilledBy = this.fulfilledBy,
+            expirationDate = this.expirationDate?.let {Date(it)},
             moneyReturned = this.moneyReturned
         )
     }

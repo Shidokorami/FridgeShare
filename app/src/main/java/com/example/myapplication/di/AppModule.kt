@@ -26,6 +26,7 @@ import com.example.myapplication.domain.useCases.product_use_cases.GetProductsFr
 import com.example.myapplication.domain.useCases.product_use_cases.ProductUseCases
 import com.example.myapplication.domain.useCases.request_use_cases.AddRequest
 import com.example.myapplication.domain.useCases.request_use_cases.DeleteRequest
+import com.example.myapplication.domain.useCases.request_use_cases.FulfillRequest
 import com.example.myapplication.domain.useCases.request_use_cases.GetRequest
 import com.example.myapplication.domain.useCases.request_use_cases.GetRequestsByFulfill
 import com.example.myapplication.domain.useCases.request_use_cases.RequestUseCases
@@ -125,12 +126,18 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRequestUseCases(repository: ProductRequestRepository): RequestUseCases{
+    fun provideRequestUseCases(
+        productRequestRepo: ProductRequestRepository,
+        userUseCases: UserUseCases,
+        productUseCases: ProductUseCases
+    ): RequestUseCases {
+        val addRequest = AddRequest(productRequestRepo)
         return RequestUseCases(
-            getRequestsByFulfill = GetRequestsByFulfill(repository),
-            getRequest = GetRequest(repository),
-            addRequest = AddRequest(repository),
-            deleteRequest = DeleteRequest(repository)
+            getRequestsByFulfill = GetRequestsByFulfill(productRequestRepo, userUseCases.getUserName),
+            getRequest = GetRequest(productRequestRepo),
+            addRequest = addRequest,
+            deleteRequest = DeleteRequest(productRequestRepo),
+            fulfillRequest = FulfillRequest(addRequest, productUseCases) // ✅ bez cyklu
         )
     }
 

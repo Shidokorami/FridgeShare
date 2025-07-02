@@ -1,5 +1,6 @@
 package com.example.myapplication.presentation.requestlist
 
+import RequestListEvent
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -46,11 +48,13 @@ class RequestListViewModel @Inject constructor(
 
 
     init {
-        getUnfulfilledRequests()
-        getFulfilledRequests()
+        viewModelScope.launch {
+            getUnfulfilledRequests()
+            getFulfilledRequests()
+        }
     }
 
-    private fun getUnfulfilledRequests() {
+    private suspend fun getUnfulfilledRequests() {
         getUnfulfilledRequestsJob?.cancel()
         getUnfulfilledRequestsJob = requestUseCases.getRequestsByFulfill(householdId, false)
             .onEach { requests ->
@@ -59,7 +63,7 @@ class RequestListViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    private fun getFulfilledRequests() {
+    private suspend fun getFulfilledRequests() {
         getFulfilledRequestsJob?.cancel()
         getFulfilledRequestsJob = requestUseCases.getRequestsByFulfill(householdId, true)
             .onEach { requests ->
@@ -73,6 +77,23 @@ class RequestListViewModel @Inject constructor(
             is RequestListEvent.ChangeSelectedTab -> {
                 _selectedTabIndex.value = event.newIndex
             }
+            is RequestListEvent.OnDeleteRequestClick -> {
+                viewModelScope.launch {
+                    requestUseCases.deleteRequest(householdId, event.requestId)
+                }
+            }
+            is RequestListEvent.OnFulfillRequestClick -> {
+                viewModelScope.launch {
+                    // Możesz usunąć ten event, jeśli nie jest już potrzebny
+                }
+            }
+            is RequestListEvent.OnConfirmFulfillRequest -> {
+                viewModelScope.launch {
+                    requestUseCases.fulfillRequest(event.updatedRequest, householdId)
+                    // Zakładam, że masz w UseCase metodę fulfillRequest która przyjmuje cały obiekt ProductRequest
+                }
+            }
         }
     }
+
 }

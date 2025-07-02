@@ -27,6 +27,7 @@ data class ProductRequest(
 
     val fulfillerName: String? = null,
 
+    val expirationDate: Long? = null,
 
     val moneyReturned: Boolean = false
 )

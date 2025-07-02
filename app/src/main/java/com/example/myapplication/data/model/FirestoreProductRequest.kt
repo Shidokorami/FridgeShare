@@ -19,6 +19,8 @@ data class FirestoreProductRequest(
     val fulfilled: Boolean = false,
     val fulfilledBy: String? = null,
 
+    val expirationDate: Date? = null,
+
     val moneyReturned: Boolean = false
 )
 

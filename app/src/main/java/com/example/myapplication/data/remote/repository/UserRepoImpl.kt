@@ -24,7 +24,7 @@ class UserRepoImpl(
 
             User(
                 id = firestoreId,
-                username = this.name
+                username = this.email
             )
         }
     }
@@ -32,7 +32,7 @@ class UserRepoImpl(
     private fun
             User.toFirestoreModel(): FirestoreUser {
         return FirestoreUser(
-            name = this.username
+            email = this.username
         )
     }
 
