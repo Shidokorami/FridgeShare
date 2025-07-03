@@ -1,12 +1,14 @@
 package com.example.myapplication.data.util
 
-import androidx.room.TypeConverter
 import java.math.BigDecimal
 
-class BigDecimalConverter {
-    @TypeConverter
-    fun fromBigDecimal(value: BigDecimal?): String? = value?.toPlainString()
-
-    @TypeConverter
-    fun toBigDecimal(value: String?): BigDecimal? = value?.let { BigDecimal(it) }
+fun BigDecimal?.toFirestoreString(): String? {
+    return this?.toPlainString()
 }
+
+
+fun String?.toBigDecimalFromFirestore(): BigDecimal? {
+    return this?.let { BigDecimal(it) }
+}
+
+

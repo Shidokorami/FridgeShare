@@ -3,11 +3,11 @@ package com.example.myapplication.domain.model
 import java.math.BigDecimal
 
 data class ProductRequest(
-    val id: Long,
+    val id: String,
 
-    val householdId: Long,
+    val householdId: String,
 
-    val creatorId: Long? = null,
+    val creatorId: String? = null,
 
     val creatorName: String? = null,
 
@@ -19,13 +19,15 @@ data class ProductRequest(
 
     val price: BigDecimal? = null,
 
-    val expirationDate: Long? = null,
+    val fulfilledDate: Long? = null,
 
     val fulfilled: Boolean = false,
 
-    val fulfilledBy: Long? = null,
-    
+    val fulfilledBy: String? = null,
+
     val fulfillerName: String? = null,
+
+    val expirationDate: Long? = null,
 
     val moneyReturned: Boolean = false
 )

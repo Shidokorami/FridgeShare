@@ -1,7 +1,5 @@
 package com.example.myapplication.presentation.add_edit_product
 
-import android.graphics.Color.red
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,7 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -36,10 +33,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myapplication.presentation.add_edit_product.AddEditProductViewModel.UiEvent
-import com.example.myapplication.presentation.add_edit_product.components.AddEditTextField
+import com.example.myapplication.presentation.util.AddEditTextField
 import com.example.myapplication.presentation.add_edit_product.components.DeleteProductConfirmationDialog
-import com.example.myapplication.presentation.add_edit_product.components.ExpirationDatePicker
-import com.example.myapplication.presentation.add_edit_product.components.UnitDropdownMenu
+import com.example.myapplication.presentation.util.ExpirationDatePicker
+import com.example.myapplication.presentation.util.UnitDropdownMenu
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,7 +68,7 @@ fun AddEditProductScreenUi(
                     onNavigateBack()
                 }
 
-                is UiEvent.DeleteProductSucces -> {
+                is UiEvent.DeleteProductSuccess -> {
 
                     onNavigateBack()
                 }

@@ -17,7 +17,7 @@ import com.example.myapplication.presentation.navigation.RoommatesScreen
 fun BottomNavigationBar(
     items: List<HouseholdDetailNavItems>,
     navController: NavController,
-    currentHouseholdId: Long,
+    currentHouseholdId: String,
     modifier: Modifier = Modifier
 ) {
     val currentBackStackEntryState = navController.currentBackStackEntryAsState()

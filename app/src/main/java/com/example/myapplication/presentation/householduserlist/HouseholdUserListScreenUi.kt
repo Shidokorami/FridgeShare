@@ -21,7 +21,7 @@ import com.example.myapplication.domain.model.User
 
 @Composable
 fun HouseholdUserListScreenUi(
-    householdId: Long,
+    householdId: String,
     viewModel: HouseholdUserListViewModel = hiltViewModel()
 ) {
     val users by viewModel.users.collectAsState()

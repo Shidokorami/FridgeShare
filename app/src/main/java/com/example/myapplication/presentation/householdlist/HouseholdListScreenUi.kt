@@ -23,15 +23,24 @@ import com.example.myapplication.ui.theme.AppTheme
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myapplication.presentation.householdlist.components.HouseholdItem
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.example.myapplication.presentation.householdlist.components.CreateHouseholdDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HouseholdListScreenUi(
-    onHouseholdClick: (Long) -> Unit,
+    onHouseholdClick: (String) -> Unit,
     viewModel: HouseholdListViewModel = hiltViewModel()
 ) {
 
     val state = viewModel.state.collectAsState()
+
+    var showCreateHouseholdDialog by remember { mutableStateOf(false) }
 
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -41,6 +50,11 @@ fun HouseholdListScreenUi(
                 modifier = Modifier,
                 scrollBehavior = scrollBehavior
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(onClick = {showCreateHouseholdDialog = true }) {
+                Icon(Icons.Filled.Add, "Create a new household")
+            }
         },
 
         content = { padding ->
@@ -60,6 +74,16 @@ fun HouseholdListScreenUi(
 
         }
     )
+
+    if (showCreateHouseholdDialog) {
+        CreateHouseholdDialog(
+            onDismiss = { showCreateHouseholdDialog = false },
+            onCreateClick = { householdName ->
+                viewModel.onEvent(HouseholdListEvent.ClickedCreateButton(householdName))
+                showCreateHouseholdDialog = false
+            }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -93,22 +117,3 @@ fun MainTopBar(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true)
-@Composable
-fun MainTopBarPreview() {
-    AppTheme {
-        MainTopBar(
-            modifier = Modifier,
-            scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-        )
-    }
-
-}
-
-//@Preview
-//@Composable
-//fun MainPreview() {
-//    AppTheme { HouseholdListScreen() }
-//
-//}

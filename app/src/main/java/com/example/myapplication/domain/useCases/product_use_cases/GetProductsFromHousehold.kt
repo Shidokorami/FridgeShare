@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 class GetProductsFromHousehold(
     private val repository: ProductRepository
 ) {
-    operator fun invoke(householdId: Long): Flow<List<Product>> {
-        return repository.getProductsFromHousehold(householdId)
+    operator fun invoke(householdId: String): Flow<List<Product>> {
+        return repository.getProductsForHousehold(householdId)
     }
 }

@@ -4,15 +4,10 @@ import com.example.myapplication.domain.model.Product
 import kotlinx.coroutines.flow.Flow
 
 interface ProductRepository {
-
-    fun getProductsFromHousehold(householdId: Long): Flow<List<Product>>
-
-    suspend fun getProductById(productId: Long): Product?
-
-    suspend fun insertProduct(product: Product)
-
-    suspend fun updateProduct(product: Product)
-
-    suspend fun deleteProduct(product: Product)
-
+    fun getProductsForHousehold(householdId: String): Flow<List<Product>>
+    fun getProductById(householdId: String, productId: String): Flow<Product?>
+    suspend fun addProduct(householdId: String, product: Product): String
+    suspend fun updateProduct(householdId: String, product: Product)
+    suspend fun deleteProduct(householdId: String, productId: String)
+    suspend fun markProductAsBought(householdId: String, productId: String, buyerId: String)
 }

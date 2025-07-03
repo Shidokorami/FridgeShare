@@ -1,10 +1,12 @@
 package com.example.myapplication.presentation.requestlist
 
+import RequestListEvent
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.domain.model.ProductRequest
 import com.example.myapplication.domain.repository.ProductRequestRepository
+import com.example.myapplication.domain.useCases.request_use_cases.RequestUseCases
 import com.example.myapplication.presentation.add_edit_product.AddEditProductViewModel.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -16,17 +18,17 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class RequestListViewModel @Inject constructor(
-    private val requestRepository: ProductRequestRepository,
+    private val requestUseCases: RequestUseCases,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
 
-    private val householdId: Long = savedStateHandle.get<String>("householdId")?.toLongOrNull()
-        ?: throw IllegalArgumentException("HouseholdId is required")
+    private val householdId: String = savedStateHandle.get<String>("householdId")?: throw IllegalArgumentException("HouseholdId is required")
 
     private val _unfulfilledRequests = MutableStateFlow<List<ProductRequest>>(emptyList())
     val unfulfilledRequests: StateFlow<List<ProductRequest>> = _unfulfilledRequests.asStateFlow()
@@ -44,23 +46,26 @@ class RequestListViewModel @Inject constructor(
     private var getFulfilledRequestsJob: Job? = null
 
 
+
     init {
-        getUnfulfilledRequests()
-        getFulfilledRequests()
+        viewModelScope.launch {
+            getUnfulfilledRequests()
+            getFulfilledRequests()
+        }
     }
 
-    private fun getUnfulfilledRequests() {
+    private suspend fun getUnfulfilledRequests() {
         getUnfulfilledRequestsJob?.cancel()
-        getUnfulfilledRequestsJob = requestRepository.getRequestByFulfillForHousehold(householdId, false)
+        getUnfulfilledRequestsJob = requestUseCases.getRequestsByFulfill(householdId, false)
             .onEach { requests ->
                 _unfulfilledRequests.value = requests
             }
             .launchIn(viewModelScope)
     }
 
-    private fun getFulfilledRequests() {
+    private suspend fun getFulfilledRequests() {
         getFulfilledRequestsJob?.cancel()
-        getFulfilledRequestsJob = requestRepository.getRequestByFulfillForHousehold(householdId, true)
+        getFulfilledRequestsJob = requestUseCases.getRequestsByFulfill(householdId, true)
             .onEach { requests ->
                 _fulfilledRequests.value = requests
             }
@@ -72,6 +77,23 @@ class RequestListViewModel @Inject constructor(
             is RequestListEvent.ChangeSelectedTab -> {
                 _selectedTabIndex.value = event.newIndex
             }
+            is RequestListEvent.OnDeleteRequestClick -> {
+                viewModelScope.launch {
+                    requestUseCases.deleteRequest(householdId, event.requestId)
+                }
+            }
+            is RequestListEvent.OnFulfillRequestClick -> {
+                viewModelScope.launch {
+                    // Możesz usunąć ten event, jeśli nie jest już potrzebny
+                }
+            }
+            is RequestListEvent.OnConfirmFulfillRequest -> {
+                viewModelScope.launch {
+                    requestUseCases.fulfillRequest(event.updatedRequest, householdId)
+                    // Zakładam, że masz w UseCase metodę fulfillRequest która przyjmuje cały obiekt ProductRequest
+                }
+            }
         }
     }
+
 }

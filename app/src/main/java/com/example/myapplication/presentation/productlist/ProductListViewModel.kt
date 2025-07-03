@@ -26,7 +26,7 @@ class ProductListViewModel @Inject constructor(
 
     private var getProductsJob: Job? = null
 
-    private val householdId: Long = savedStateHandle.get<Long>("householdId") ?: 0L
+    private val householdId: String= savedStateHandle.get<String>("householdId") ?: ""
 
     init {
         getProducts()
