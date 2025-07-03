@@ -1,4 +1,4 @@
-package com.example.myapplication.presentation.loginscreen.components
+package com.example.myapplication.presentation.singup.components
 
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
@@ -23,33 +23,33 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.myapplication.ui.theme.AppTheme
 
 @Composable
-fun PasswordField(
+fun PasswordSignUpField(
     value: String,
     onChange: (String) -> Unit,
     submit: () -> Unit,
     modifier: Modifier = Modifier,
     label: String = "Password",
-    placeholder: String = "Enter your Password"
+    placeholder: String = "Enter your Password",
+    showPassword: Boolean = false
 ){
-    var isPasswordVisible by remember { mutableStateOf(false) }
+    var isPasswordVisible by remember { mutableStateOf(showPassword) }
 
     val leadingIcon = @Composable{
         Icon(
             Icons.Default.Key,
-            contentDescription = "",
+            contentDescription = null,
             tint = MaterialTheme.colorScheme.primary
         )
     }
 
-    val trailingIcon = @Composable{
-        IconButton(onClick = {isPasswordVisible = !isPasswordVisible}) {
+    val trailingIcon = @Composable {
+        IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
             Icon(
                 if (isPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                contentDescription = "",
+                contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )
         }
-
     }
 
     OutlinedTextField(
@@ -59,26 +59,14 @@ fun PasswordField(
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
         keyboardActions = KeyboardActions(
-            onDone = {submit()}
+            onDone = { submit() }
         ),
-        placeholder = {Text(placeholder)},
-        label = {Text(label)},
+        placeholder = { Text(placeholder) },
+        label = { Text(label) },
         singleLine = true,
         visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation()
-
     )
 }
 
-@Preview
-@Composable
-fun PasswordFieldPreview(){
-    AppTheme {
-        Surface {
-            PasswordField(
-                value = "",
-                onChange = {},
-                submit = {}
-            )
-        }
-    }
-}
+
+
